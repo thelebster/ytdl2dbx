@@ -1,7 +1,17 @@
 version: '3'
 
 services:
-  ytdl2dbx-app:
+  redis:
+    image: redis:alpine
+    hostname: redis
+    container_name: redis
+    restart: always
+    ports:
+      - ${REDIS_HOST}:${REDIS_PORT}:6379
+    volumes:
+      - ./data/redis:/data
+
+  app:
     build: ./app
     environment:
       - APP_PORT=${APP_PORT}
@@ -11,12 +21,15 @@ services:
       - FLASK_APP=${FLASK_APP}
       - GUNICORN_CMD_ARGS=${GUNICORN_CMD_ARGS}
       - TEMP_DIR=${TEMP_DIR}
-    image: ytdl2dbx-app
-    hostname: ytdl2dbx-app
-    container_name: ytdl2dbx-app
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_URL=${REDIS_URL}
+    image: app
+    hostname: app
+    container_name: app
     restart: always
     links:
-      - ytdl2dbx-redis
+      - redis
     ports:
       - ${APP_PORT}:${FLASK_PORT}
     volumes:
