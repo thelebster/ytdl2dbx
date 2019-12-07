@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  ytdl2dbx-app:
+    build: ./app
+    environment:
+      - APP_PORT=${APP_PORT}
+      - FLASK_PORT=${FLASK_PORT}
+      - FLASK_HOST=${FLASK_HOST}
+      - FLASK_ENV=${FLASK_ENV}
+      - FLASK_APP=${FLASK_APP}
+      - GUNICORN_CMD_ARGS=${GUNICORN_CMD_ARGS}
+      - TEMP_DIR=${TEMP_DIR}
+    image: ytdl2dbx-app
+    hostname: ytdl2dbx-app
+    container_name: ytdl2dbx-app
+    restart: always
+    links:
+      - ytdl2dbx-redis
+    ports:
+      - ${APP_PORT}:${FLASK_PORT}
+    volumes:
+      - ./tmp:${TEMP_DIR}
