@@ -20,7 +20,6 @@ services:
       - FLASK_ENV=${FLASK_ENV}
       - FLASK_APP=${FLASK_APP}
       - GUNICORN_CMD_ARGS=${GUNICORN_CMD_ARGS}
-      - TEMP_DIR=${TEMP_DIR}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - REDIS_URL=${REDIS_URL}
@@ -32,5 +31,24 @@ services:
       - redis
     ports:
       - ${APP_PORT}:${FLASK_PORT}
+
+  worker:
+    build: ./worker
+    environment:
+      - TEMP_DIR=${TEMP_DIR}
+      - REDIS_URL=${REDIS_URL}
+      - YTDL_OPTS_OUTTMPL=${YTDL_OPTS_OUTTMPL}
+      - YTDL_OPTS_FORMAT=${YTDL_OPTS_FORMAT}
+      - YTDL_OPTS_MERGE_FORMAT=${YTDL_OPTS_MERGE_FORMAT}
+      - DROPBOX_ACCESS_TOKEN=${DROPBOX_ACCESS_TOKEN}
+      - DROPBOX_BASE_PATH=${DROPBOX_BASE_PATH}
+    image: worker
+    hostname: worker
+    container_name: worker
+    restart: always
+    links:
+      - redis
+    depends_on:
+      - redis
     volumes:
       - ./tmp:${TEMP_DIR}

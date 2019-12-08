@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 REDIS_URL = os.getenv('REDIS_URL', 'redis://127.0.0.1:6379')
 redis_conn = Redis.from_url(REDIS_URL)
-q = Queue(connection=redis_conn)
+queue = Queue(connection=redis_conn)
 
 
 @app.route('/download', methods=['POST'])
@@ -21,7 +21,7 @@ def download():
         return jsonify({"error": "Url can not be empty."}), 400
 
     try:
-        job = q.enqueue('download', yt_url)
+        job = queue.enqueue('worker.download', yt_url, job_timeout=3600)
         logger.debug(job)
         return jsonify({"job_id": job.id})
     except Exception as e:
@@ -31,7 +31,7 @@ def download():
 
 @app.route('/list_jobs', methods=['GET'])
 def list_jobs():
-    queued_jobs_ids = q.get_job_ids()
+    queued_jobs_ids = queue.get_job_ids()
     return jsonify(queued_jobs_ids)
 
 
