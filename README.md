@@ -1,5 +1,7 @@
 Self-hosted service to download videos from youtube.com or other video platforms to Dropbox.
 
+![screenshot](https://cdn-std.droplr.net/files/acc_567335/CpdBDV)
+
 Build on top of [youtube-dl](https://github.com/ytdl-org/youtube-dl) and [RQ](https://python-rq.org/docs/results/).
 
 ### Start services
